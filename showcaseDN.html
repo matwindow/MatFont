@@ -153,7 +153,7 @@
     <header>
         <div class="header-title">
             <h1>MatFont Character Map Showcase</h1>
-            <div class="path" id="current-path">Location: big / fonts / defalut / .config</div>
+            <div class="path" id="current-path">Location: big / fonts / defalut / a.config</div>
         </div>
         
         <div class="control-panel">
@@ -205,17 +205,17 @@
             const container = document.getElementById("showcase-target");
             const currentPath = document.getElementById("current-path");
             
-            container.innerHTML = `<div class="status-msg status-loading">Fetching configuration from '.config'...</div>`;
-            currentPath.textContent = `Location: big / fonts / ${locationKey} / .config`;
+            container.innerHTML = `<div class="status-msg status-loading">Fetching configuration from 'a.config'...</div>`;
+            currentPath.textContent = `Location: big / fonts / ${locationKey} / a.config`;
 
-            // Clean, relative folder target url
-            const targetConfigFileUrl = `.config`;
+            // Updated destination URL file reference name to bypass Jekyll file exclusions
+            const targetConfigFileUrl = `a.config`;
 
             try {
                 const response = await fetch(targetConfigFileUrl);
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP Error ${response.status} - Could not locate .config file template profile.`);
+                    throw new Error(`HTTP Error ${response.status} - Could not locate 'a.config' file template profile.`);
                 }
 
                 const rawConfigText = await response.text();
@@ -227,7 +227,7 @@
                     container.innerHTML = `
                         <div class="status-msg status-error">
                             <strong>Parsing Error!</strong><br>
-                            Loaded your .config file, but couldn't read the unicode format ranges.<br>
+                            Loaded your a.config file, but couldn't read the unicode format ranges.<br>
                             Verify that your ranges match this structure exactly:<br>
                             <code>{name:"enBIG",from: "U+0041", to: "U+005A"}</code>
                         </div>`;
@@ -236,7 +236,7 @@
 
                 const card = document.createElement("div");
                 card.className = "font-card";
-                card.innerHTML = `<div class="font-name">Active Config Map: big/fonts/${locationKey}/.config</div>`;
+                card.innerHTML = `<div class="font-name">Active Config Map: big/fonts/${locationKey}/a.config</div>`;
 
                 parsedRanges.forEach(range => {
                     const rangeBox = document.createElement("div");
@@ -262,7 +262,7 @@
                         <strong>Fetch Operation Failed! (404)</strong><br>
                         Could not resolve target file at relative path: <code>${targetConfigFileUrl}</code><br>
                         <em>Error Details: ${error.message}</em><br><br>
-                        <small>Reminder: GitHub Pages hides dotfiles by default. Make sure you commit an empty file named <code>.nojekyll</code> right into your main root repository directory to make <code>.config</code> public!</small>
+                        <small>Reminder: Make sure you have renamed the file from <code>.config</code> to exactly <code>a.config</code> inside your <code>big/fonts/defalut/</code> directory on GitHub.</small>
                     </div>`;
             }
         }
