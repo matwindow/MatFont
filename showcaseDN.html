@@ -153,14 +153,14 @@
     <header>
         <div class="header-title">
             <h1>MatFont Character Map Showcase</h1>
-            <div class="path" id="current-path">Location: /big/fonts/defalut/.config</div>
+            <div class="path" id="current-path">Location: big / fonts / defalut / .config</div>
         </div>
         
         <div class="control-panel">
             <label for="location-select">Select Font Directory Location:</label>
             <select id="location-select" class="font-dropdown">
-                <!-- Set the correct FONT_NAME folders directly here -->
-                <option value="defalut" selected>/big/fonts/defalut/</option>
+                <!-- Dropdown items use the exact FONT_NAME directly -->
+                <option value="defalut" selected>big / fonts / defalut /</option>
             </select>
         </div>
     </header>
@@ -207,15 +207,14 @@
             const currentPath = document.getElementById("current-path");
             
             container.innerHTML = `<div class="status-msg status-loading">Fetching target profile data...</div>`;
-            currentPath.textContent = `Location: /big/fonts/${locationKey}/.config`;
+            currentPath.textContent = `Location: big / fonts / ${locationKey} / .config`;
 
-            // Updated URL resolution logic using standard fallback routing
-            // If the showcase file lives inside /big/fonts/defalut/ directory:
-            // '../defalut/.config' points to the correct relative target location
-            const targetConfigFileUrl = `../${locationKey}/.config`;
+            // Configured file endpoint url string matching your repository layout tree
+            const targetConfigFileUrl = `big/fonts/${locationKey}/.config`;
 
             try {
-                const response = await fetch(targetConfigFileUrl);
+                // Fetch using a root slash to map starting directly from your project server root directory
+                const response = await fetch('/' + targetConfigFileUrl);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP Status ${response.status} - File could not be found at destination.`);
@@ -239,7 +238,7 @@
 
                 const card = document.createElement("div");
                 card.className = "font-card";
-                card.innerHTML = `<div class="font-name">Active Config Map: /big/fonts/${locationKey}/.config</div>`;
+                card.innerHTML = `<div class="font-name">Active Config Map: big/fonts/${locationKey}/.config</div>`;
 
                 parsedRanges.forEach(range => {
                     const rangeBox = document.createElement("div");
@@ -263,9 +262,9 @@
                 container.innerHTML = `
                     <div class="status-msg status-error">
                         <strong>File Fetch Error! (404)</strong><br>
-                        Could not pull data from url target path: <code>${targetConfigFileUrl}</code><br>
+                        Could not pull data from url target path: <code>/${targetConfigFileUrl}</code><br>
                         <em>System Log Details: ${error.message}</em><br><br>
-                        <small>Debugging tips: Verify your <code>.config</code> file is committed inside <code>/big/fonts/${locationKey}/</code> on GitHub, and ensure the folder path names match your repository case casing exactly.</small>
+                        <small>Debugging tips: Verify your <code>.config</code> file is committed inside <code>big/fonts/${locationKey}/</code> on GitHub, and ensure the folder path names match your repository case casing exactly.</small>
                     </div>`;
             }
         }
