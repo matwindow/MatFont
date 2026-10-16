@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatFont - Showcase - DN</title>
+    <title>MatFont - GitHub Individual Character Asset Showcase</title>
     <style>
-        /* Clean sans-serif layout styling */
+        /* Modern sans-serif framework styling */
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background-color: #0d1117;
@@ -88,13 +88,29 @@
             padding: 1.5rem;
         }
 
+        .font-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
         .font-name {
             font-size: 1.2rem;
             font-weight: bold;
             color: #f0f6fc;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #21262d;
-            padding-bottom: 0.5rem;
+        }
+
+        .format-badge {
+            background-color: #238636;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
         }
 
         .range-box {
@@ -109,7 +125,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .label {
@@ -124,11 +140,39 @@
             color: #8b949e;
         }
 
-        .char-grid {
-            font-size: 1.4rem;
-            line-height: 1.8;
-            word-wrap: break-word;
-            letter-spacing: 0.3rem;
+        /* Responsive asset viewer dashboard layout */
+        .char-asset-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .char-item-wrapper {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 50px;
+            height: 70px;
+        }
+
+        /* Keeps file previews constrained safely */
+        .char-img-preview {
+            max-width: 32px;
+            max-height: 32px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .char-meta-text {
+            font-size: 0.7rem;
+            color: #8b949e;
+            margin-top: 0.25rem;
+            text-align: center;
         }
 
         .status-msg {
@@ -152,27 +196,32 @@
 
     <header>
         <div class="header-title">
-            <h1>MatFont Character Map Showcase</h1>
+            <h1>MatFont Graphic Asset Showcase</h1>
             <div class="path" id="current-path">Location: big / fonts / defalut / a.config</div>
         </div>
         
         <div class="control-panel">
             <label for="location-select">Select Font Directory Location:</label>
             <select id="location-select" class="font-dropdown">
-                <!-- Value is the FONTNAME subfolder -->
                 <option value="defalut" selected>big / fonts / defalut /</option>
             </select>
         </div>
     </header>
 
     <div class="font-container" id="showcase-target">
-        <!-- Live character stream workspace -->
+        <!-- Graphic element preview pipeline injection area -->
     </div>
-
     <script>
-        // Regex engine to split and collect custom stylez object syntax parameters
+        // Reads standard character ranges and separate image target property blocks
         function parseStylezConfig(configText) {
             const ranges = [];
+            
+            // Extracts format string extension names cleanly from your custom block properties
+            const formatRegex = /image\s*:\s*\{\s*format\s*:\s*"[.]?([^"]+)"\s*\}/i;
+            const formatMatch = configText.match(formatRegex);
+            const detectedFormat = formatMatch ? formatMatch[1] : "svg";
+
+            // Parses character index maps
             const rangeBlockRegex = /\{\s*name\s*:\s*"([^"]+)"\s*,\s*from\s*:\s*"U\+([0-9A-Fa-f]+)"\s*,\s*to\s*:\s*"U\+([0-9A-Fa-f]+)"\s*\}/g;
             let match;
 
@@ -185,52 +234,83 @@
                     toStr: `U+${match[3].toUpperCase()}`
                 });
             }
-            return ranges;
+            
+            return {
+                imageFormat: detectedFormat,
+                ranges: ranges
+            };
         }
 
-        // Loops sequentially to compile unicode symbols from raw numeric ranges
-        function generateCharacterMap(fromCode, toCode) {
-            let result = "";
+        // Loops range indices to output graphic img elements for every isolated file character entry
+        function renderGraphicBlocks(fromCode, toCode, folderKey, fileExt, targetWrapper) {
             for (let i = fromCode; i <= toCode; i++) {
-                try {
-                    result += String.fromCodePoint(i);
-                } catch (e) {
-                    continue;
-                }
+                const charSymbol = String.fromCodePoint(i);
+                
+                // Construct standard filename structure matching individual profiles (e.g. A.svg, 1.svg)
+                const assetFileName = `${charSymbol}.${fileExt}`;
+                
+                // Target URL paths pointing directly inside your nested font directory asset subfolders
+                const fullAssetPathUrl = `big/fonts/${folderKey}/${assetFileName}`;
+
+                // Create item preview module frame
+                const itemWrapper = document.createElement("div");
+                itemWrapper.className = "char-item-wrapper";
+
+                // Build live graphic element image loading structures inside the component framework
+                const imgElement = document.createElement("img");
+                imgElement.className = "char-img-preview";
+                imgElement.src = fullAssetPathUrl;
+                imgElement.alt = charSymbol;
+                
+                // Fallback protection if an optional character asset doesn't exist inside the folder tree yet
+                imgElement.onerror = function() {
+                    this.style.display = "none";
+                    const fallbackLabel = document.createElement("span");
+                    fallbackLabel.style.fontSize = "1rem";
+                    fallbackLabel.style.fontWeight = "bold";
+                    fallbackLabel.style.color = "#8b949e";
+                    fallbackLabel.textContent = "?";
+                    itemWrapper.insertBefore(fallbackLabel, itemWrapper.firstChild);
+                };
+
+                const metaText = document.createElement("div");
+                metaText.className = "char-meta-text";
+                metaText.textContent = charSymbol;
+
+                itemWrapper.appendChild(imgElement);
+                itemWrapper.appendChild(metaText);
+                targetWrapper.appendChild(itemWrapper);
             }
-            return result;
         }
 
-        // Handles data request operations across subfolder directories
+        // Active workspace fetch loader orchestrator 
         async function loadAndRenderShowcase(locationKey) {
             const container = document.getElementById("showcase-target");
             const currentPath = document.getElementById("current-path");
             
-            container.innerHTML = `<div class="status-msg status-loading">Loading path profiles...</div>`;
+            container.innerHTML = `<div class="status-msg status-loading">Scanning asset directories...</div>`;
             
-            // Fixed relative target URL heading straight into your nested subfolders from the root
             const targetConfigFileUrl = `big/fonts/${locationKey}/a.config`;
-            
             currentPath.textContent = `Location: ${targetConfigFileUrl}`;
 
             try {
                 const response = await fetch(targetConfigFileUrl);
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP Error ${response.status} - Could not find file data.`);
+                    throw new Error(`HTTP Error ${response.status} - Could not locate layout configuration.`);
                 }
 
                 const rawConfigText = await response.text();
-                const parsedRanges = parseStylezConfig(rawConfigText);
+                const configData = parseStylezConfig(rawConfigText);
 
                 container.innerHTML = "";
 
-                if (parsedRanges.length === 0) {
+                if (configData.ranges.length === 0) {
                     container.innerHTML = `
                         <div class="status-msg status-error">
                             <strong>Parsing Match Drop!</strong><br>
-                            Successfully loaded the file at <code>${targetConfigFileUrl}</code>, but the text parser failed.<br>
-                            Ensure your properties inside the array look exactly like this style layout:<br>
+                            Successfully loaded configuration file at destination, but text parameters could not be read.<br>
+                            Ensure objects follow this style structure:<br>
                             <code>{name:"enBIG",from: "U+0041", to: "U+005A"}</code>
                         </div>`;
                     return;
@@ -238,21 +318,33 @@
 
                 const card = document.createElement("div");
                 card.className = "font-card";
-                card.innerHTML = `<div class="font-name">Active Config Map: ${targetConfigFileUrl}</div>`;
+                
+                card.innerHTML = `
+                    <div class="font-header-row">
+                        <div class="font-name">Active Config Map: ${targetConfigFileUrl}</div>
+                        <div class="format-badge">Extension: .${configData.imageFormat}</div>
+                    </div>
+                `;
 
-                parsedRanges.forEach(range => {
+                // Map grid elements out block by block dynamically
+                configData.ranges.forEach(range => {
                     const rangeBox = document.createElement("div");
                     rangeBox.className = "range-box";
-
-                    const chars = generateCharacterMap(range.from, range.to);
 
                     rangeBox.innerHTML = `
                         <div class="range-header">
                             <span class="label">${range.name}</span>
                             <span class="info">${range.fromStr} → ${range.toStr}</span>
                         </div>
-                        <div class="char-grid">${chars}</div>
                     `;
+
+                    const assetGrid = document.createElement("div");
+                    assetGrid.className = "char-asset-grid";
+
+                    // Call the graphic engine rendering module instead of spitting raw strings
+                    renderGraphicBlocks(range.from, range.to, locationKey, configData.imageFormat, assetGrid);
+
+                    rangeBox.appendChild(assetGrid);
                     card.appendChild(rangeBox);
                 });
 
@@ -264,7 +356,7 @@
                         <strong>File Fetch Error! (404 Not Found)</strong><br>
                         Could not resolve target asset path: <code>${targetConfigFileUrl}</code><br>
                         <em>System Log Details: ${error.message}</em><br><br>
-                        <small>Help check: Double check that you renamed your configuration file on GitHub to exactly <code>a.config</code> inside your <code>big/fonts/${locationKey}/</code> folder, and verify that the path is spelled correctly.</small>
+                        <small>Help check: Verify your file configuration is committed correctly on GitHub page structures.</small>
                     </div>`;
             }
         }
@@ -274,7 +366,7 @@
             loadAndRenderShowcase(event.target.value);
         });
 
-        // Initialize display execution
+        // Initialize script logic 
         loadAndRenderShowcase("defalut");
     </script>
 </body>
