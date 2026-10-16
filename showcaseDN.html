@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatFont - Live Font Location Showcase</title>
+    <title>MatFont - GitHub Font Location Showcase</title>
     <style>
-        /* The entire file strictly utilizes a clean sans-serif design */
+        /* Clean sans-serif layout styling */
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background-color: #0d1117;
@@ -55,7 +55,6 @@
             font-weight: bold;
         }
 
-        /* Styling for the font directory selector */
         .font-dropdown {
             background-color: #161b22;
             color: #f0f6fc;
@@ -132,7 +131,6 @@
             letter-spacing: 0.3rem;
         }
 
-        /* Status notification boxes */
         .status-msg {
             padding: 1rem;
             border-radius: 6px;
@@ -162,89 +160,84 @@
             <label for="location-select">Select Font Directory Location:</label>
             <select id="location-select" class="font-dropdown">
                 <option value="defalut" selected>big / fonts / defalut /</option>
-                <option value="sans-serif">big / fonts / sans-serif /</option>
-                <option value="monospace">big / fonts / monospace /</option>
-                <option value="custom-stylez">big / fonts / custom-stylez /</option>
             </select>
         </div>
     </header>
 
     <div class="font-container" id="showcase-target">
-        <!-- Live stream data injection area -->
+        <!-- Live repository mapping data rendering block -->
     </div>
 
     <script>
-        // Custom parser built to process your exact stylez configuration block properties
+        // Parses your custom stylez object properties completely via clean regex
         function parseStylezConfig(configText) {
             const ranges = [];
-            // Target specific layout attributes matching your design layout properties
-            const rangeBlockRegex = /\{name:\s*"([^"]+)"\s*,\s*from:\s*"U\+([0-9A-Fa-f]+)"\s*,\s*to:\s*"U\+([0-9A-Fa-f]+)"\}/g;
+            const rangeBlockRegex = /\{\s*name\s*:\s*"([^"]+)"\s*,\s*from\s*:\s*"U\+([0-9A-Fa-f]+)"\s*,\s*to\s*:\s*"U\+([0-9A-Fa-f]+)"\s*\}/g;
             let match;
 
             while ((match = rangeBlockRegex.exec(configText)) !== null) {
                 ranges.push({
-                    name: match[1],
-                    from: parseInt(match[2], 16),
-                    to: parseInt(match[3], 16),
-                    fromStr: `U+${match[2].toUpperCase()}`,
-                    toStr: `U+${match[3].toUpperCase()}`
+                    name: match,
+                    from: parseInt(match, 16),
+                    to: parseInt(match, 16),
+                    fromStr: `U+${match.toUpperCase()}`,
+                    toStr: `U+${match.toUpperCase()}`
                 });
             }
             return ranges;
         }
 
-        // Resolves character sequences directly from integer code maps
+        // Generates continuous character blocks using integer point parameters
         function generateCharacterMap(fromCode, toCode) {
             let result = "";
             for (let i = fromCode; i <= toCode; i++) {
                 try {
                     result += String.fromCodePoint(i);
                 } catch (e) {
-                    // Fail-safe protection switch for invalid codepoint offsets
                     continue;
                 }
             }
             return result;
         }
 
-        // Handles live fetch operations down your file server network
+        // Pulls config data live straight out of GitHub hosting streams
         async function loadAndRenderShowcase(locationKey) {
             const container = document.getElementById("showcase-target");
             const currentPath = document.getElementById("current-path");
             
-            // Show loading placeholder status view
-            container.innerHTML = `<div class="status-msg status-loading">Fetching configuration from 'big/fonts/${locationKey}/.config'...</div>`;
-            
-            // Update directory context path display
+            container.innerHTML = `<div class="status-msg status-loading">Loading live configuration from GitHub repository path...</div>`;
             currentPath.textContent = `Location: big / fonts / ${locationKey} / .config`;
 
-            // Compute structural file layout path matching your relative directory engine trees
-            const targetConfigFileUrl = `../${locationKey}/.config`;
+            // Points to the relative path file right inside your target repository workspace
+            const targetConfigFileUrl = `.config`;
 
             try {
                 const response = await fetch(targetConfigFileUrl);
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP Error Status: ${response.status} - File not found.`);
+                    throw new Error(`HTTP Status ${response.status} - Could not read '.config' at folder link.`);
                 }
 
                 const rawConfigText = await response.text();
                 const parsedRanges = parseStylezConfig(rawConfigText);
 
-                // Clear status notification screen area
                 container.innerHTML = "";
 
                 if (parsedRanges.length === 0) {
-                    container.innerHTML = `<div class="status-msg status-error">Parsed file structure successfully, but no valid unicode range entries were resolved. Check property syntax!</div>`;
+                    container.innerHTML = `
+                        <div class="status-msg status-error">
+                            <strong>Parsing Error!</strong><br>
+                            Successfully downloaded .config from GitHub, but couldn't parse the attributes.<br>
+                            Check if your objects follow this design:<br>
+                            <code>{name:"enBIG",from: "U+0041", to: "U+005A"}</code>
+                        </div>`;
                     return;
                 }
 
-                // Create main font preview card wrapper
                 const card = document.createElement("div");
                 card.className = "font-card";
-                card.innerHTML = `<div class="font-name">Config Map Target: big/fonts/${locationKey}/.config</div>`;
+                card.innerHTML = `<div class="font-name">Live GitHub Target: big/fonts/${locationKey}/.config</div>`;
 
-                // Loop and render individual block ranges dynamically inside the layout container
                 parsedRanges.forEach(range => {
                     const rangeBox = document.createElement("div");
                     rangeBox.className = "range-box";
@@ -264,21 +257,18 @@
                 container.appendChild(card);
 
             } catch (error) {
-                // Render error state layout if network stream pipeline experiences a failure fault drop
                 container.innerHTML = `
                     <div class="status-msg status-error">
-                        <strong>Fetch Failed!</strong><br>
-                        Could not resolve: <code>${targetConfigFileUrl}</code><br>
-                        <em>Details: ${error.message}</em><br><br>
-                        <small>Note: Make sure your files are hosted on a local web server (like VS Code Live Server) so fetch requests are permitted.</small>
+                        <strong>GitHub Fetch Drop!</strong><br>
+                        Could not pull data from url target file: <code>${targetConfigFileUrl}</code><br>
+                        <em>System Log: ${error.message}</em><br><br>
+                        <small>Help Check: Ensure you are serving this project file through <strong>GitHub Pages</strong> or reading it inside a live deployment channel. Opening the raw source edit link directly won't fire fetch events normally.</small>
                     </div>`;
             }
         }
 
-        // Dropdown Event Listener Setup
-        const locationDropdown = document.getElementById("location-select");
-locationDropdown.addEventListener("change", (event) => {
-loadAndRenderShowcase(event.target.value);
-});
-// Execute initial load operations on browser lifecycle initialization
-loadAndRenderShowcase("defalut");
+        // Initialize script logic automatically 
+        loadAndRenderShowcase("defalut");
+    </script>
+</body>
+</html>
